@@ -16,3 +16,13 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::prefix('v1')->group(function () {
+    Route::resource('meeting', 'MeetingController');
+});
+
+Route::fallback(function () {
+    return response()->json([
+        'message' => 'Resource Not Found. If error persists, contact admin'
+    ], 404);
+});

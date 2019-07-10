@@ -46,6 +46,14 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        if ($exception instanceof ModelNotFoundException) {
+            $model = strtolower(class_basename($exception->getModel())) ;
+            return response()->json(["error"=>"{$model} with the specified id does not exist", "code" => 404], 404);
+        }
+
+        if ($exception instanceof NotFoundHttpException) {
+            return response("The specified URL does not exist", 404);
+        }
         return parent::render($request, $exception);
     }
 }
