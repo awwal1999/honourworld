@@ -2,6 +2,7 @@
 
 use App\Role;
 use Illuminate\Database\Seeder;
+use App\User;
 
 class RolesTableSeeder extends Seeder
 {
@@ -12,24 +13,13 @@ class RolesTableSeeder extends Seeder
      */
     public function run()
     {
+        $user_admin = User::all()->first();
+
         $admin_role = new Role();
         $admin_role->slug = 'admin';
         $admin_role->name = 'Admin';
         $admin_role->save();
+        $admin_role->users()->attach($user_admin);
 
-        $executive_role = new Role();
-        $executive_role->slug = 'executive';
-        $executive_role->name = 'Executive';
-        $executive_role->save();
-
-        $hod_role = new Role();
-        $hod_role->slug = 'hod';
-        $hod_role->name = 'HOD';
-        $hod_role->save();
-
-        $staff_role = new Role();
-        $staff_role->slug = 'staff';
-        $staff_role->name = 'Staff';
-        $staff_role->save();
     }
 }

@@ -18,7 +18,19 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::prefix('v1')->group(function () {
-    Route::resource('meeting', 'MeetingController');
+    
+    Route::post('login', 'PassportController@login');
+    Route::post('register', 'PassportController@register');
+    
+    Route::middleware('auth:api')->group(function () {
+        Route::apiResource('meetings', 'MeetingController');
+        Route::apiResource('users', 'UserController');
+        Route::get('user', 'PassportController@details');
+        Route::patch('meetings/{meeting}/likes', 'MeetingLikesController@likes');
+        Route::post('/meetings/{meeting}/agendas', 'MeetingAgendasController@store');
+
+
+    });
 });
 
 Route::fallback(function () {

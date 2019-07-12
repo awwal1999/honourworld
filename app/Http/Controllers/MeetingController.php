@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Meeting;
+use App\Category;
 
 class MeetingController extends Controller
 {
@@ -14,7 +15,14 @@ class MeetingController extends Controller
      */
     public function index()
     {
-        $meeting = Meeting::latest()->paginate(5);
+        if ( strtolower(auth()->user()->category()->first()->name) == 'executive') {
+            $meeting = Meeting::latest()->paginate(5);
+            return response()->json($meeting, 200);
+        }
+
+        $user_category = auth()->user()->category_id;
+        $general_category = Category::where('name', 'general')->first()->id;
+        $meeting = Meeting::latest()->where('category_id', $user_category)->orWhere('category_id', $general_category)->paginate(5);
         return response()->json($meeting, 200);
     }
 
@@ -26,7 +34,26 @@ class MeetingController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
+        if ( auth()->user()->can('create', Meeting::class) ) {
+            $attributes = request()->validate([
+                'title' => 'required|string|min:5',
+                'description' => 'required|string',
+                'photo' => 'required',
+                'venue' => 'required|string',
+                'date' => 'required',
+            ]);
+
+            Meeting::create($attributes);
+            return response()->json([
+                'message' => 'Meeting created successfully'
+            ],201);
+        }
+
+        return response()->json([
+            'message' => 'Unauthorized'
+        ], 301);
+
     }
 
     /**
@@ -36,8 +63,25 @@ class MeetingController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(Meeting $meeting)
-    {   
-        return response()->json($meeting, 200);
+    { 
+        if ( $meeting->isGeneral() ) {
+            return response()->json($meeting, 200);
+        }
+
+        if ( $meeting->isHod() ) {
+            if(auth()->user()->category()->first()->name == 'general') {
+                return response()->json(['message' => 'You are not authorised to view this'], 403);
+            }
+            return response()->json($meeting, 200);
+        }
+        if ( $meeting->isExecutive() ) {
+            if(auth()->user()->category()->first()->name != 'executive') {
+                return response()->json(['message' => 'You are not authorised to view this'], 403);
+            }
+
+            return response()->json($meeting, 200);
+        }
+        return response()->json('Nothing to show', 200);
     }
 
     /**
@@ -47,9 +91,26 @@ class MeetingController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Meeting $meeting)
     {
-        //
+        if (auth()->user()->can('create', Meeting::class)) {
+            $attributes = request()->validate([
+                'title' => 'required|string|min:5',
+                'description' => 'required|string',
+                'photo' => 'required',
+                'venue' => 'required|string',
+                'date' => 'required',
+            ]);
+
+            $meeting->update($attributes);
+            return response()->json([
+                'message' => 'Meeting updated successfully'
+            ], 201);
+        }
+
+        return response()->json([
+            'message' => 'Unauthorized'
+        ], 301);
     }
 
     /**
