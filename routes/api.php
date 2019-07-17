@@ -22,7 +22,7 @@ Route::prefix('v1')->group(function () {
     Route::post('login', 'PassportController@login');
     Route::post('register', 'PassportController@register');
     
-    Route::middleware('auth:api')->group(function () {
+    Route::middleware(['auth:api', 'acceptJson'])->group(function () {
         Route::apiResource('meetings', 'MeetingController');
         Route::apiResource('users', 'UserController');
         Route::get('user', 'PassportController@details');

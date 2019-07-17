@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Meeting extends Model
 {
-    protected $with = ['agendas'];
+    protected $with = ['agendas', 'category'];
 
     protected $fillable = [
         'title', 'description', 'photo', 'venue', 'date', 'category_id'
