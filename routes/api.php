@@ -21,6 +21,7 @@ Route::prefix('v1')->group(function () {
     
     Route::post('login', 'PassportController@login');
     Route::post('register', 'PassportController@register');
+    Route::post('token', 'TokenController@store');
     
     Route::middleware(['auth:api', 'acceptJson'])->group(function () {
         Route::apiResource('meetings', 'MeetingController');
