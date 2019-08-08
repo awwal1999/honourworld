@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Meeting;
 use App\Category;
+use App\Http\Resources\Meetings as AppMeeting;
+use App\Http\Resources\Meeting as MeetingResource;
 
 class MeetingController extends Controller
 {
@@ -17,13 +19,15 @@ class MeetingController extends Controller
     {
         if ( strtolower(auth()->user()->category()->first()->name) == 'executive') {
             $meeting = Meeting::latest()->paginate(5);
-            return response()->json($meeting, 200);
+            // return response()->json( new AppMeeting($meeting), 200);
+            return response()->json( MeetingResource::collection($meeting), 200);
         }
 
         $user_category = auth()->user()->category_id;
         $general_category = Category::where('name', 'general')->first()->id;
         $meeting = Meeting::latest()->where('category_id', $user_category)->orWhere('category_id', $general_category)->paginate(5);
-        return response()->json($meeting, 200);
+        // return response()->json(new AppMeeting($meeting), 200);
+        return response()->json( MeetingResource::collection($meeting), 200);
     }
 
     /**

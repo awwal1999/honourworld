@@ -9,7 +9,7 @@ class Meeting extends Model
     protected $with = ['agendas', 'category'];
 
     protected $fillable = [
-        'title', 'description', 'photo', 'venue', 'date', 'category_id'
+        'title', 'description', 'photo', 'venue', 'date', 'category_id', 'time'
     ];
 
     public function agendas()

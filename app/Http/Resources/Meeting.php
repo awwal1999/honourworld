@@ -14,6 +14,20 @@ class Meeting extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        // return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'title' => $this->title,
+            'description' => $this->description,
+            'photo' => $this->photo,
+            'venue' => $this->venue,
+            'venue' => $this->venue,
+            'date' => $this->date,
+            // 'time' => $this->time,
+            'category' => $this->category->name,
+            'agendas' => Agenda::collection($this->agendas),
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+        ];
     }
 }
