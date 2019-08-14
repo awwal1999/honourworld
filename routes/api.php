@@ -22,6 +22,10 @@ Route::prefix('v1')->group(function () {
     Route::post('login', 'PassportController@login');
     Route::post('register', 'PassportController@register');
     Route::post('token', 'TokenController@store');
+    Route::get('token/{user_id}', 'TokenController@view');
+    Route::apiResource('notifications', 'NotificationController')->only([
+        'index', 'show'
+    ]);
     
     Route::middleware(['auth:api', 'acceptJson'])->group(function () {
         Route::apiResource('meetings', 'MeetingController');
