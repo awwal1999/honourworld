@@ -41,4 +41,9 @@ class Meeting extends Model
     {
         return strtolower($this->category()->first()->name) == 'executive';
     }
+
+    public function path()
+    {
+        return "/admin/meetings/{$this->id}";
+    }
 }
